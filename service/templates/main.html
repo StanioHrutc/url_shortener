@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+    <link href="static/css/main.css" rel="stylesheet">
+{% endblock %}
+
+{% block js %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        $(function() {
+            $('a').on('click', function(e) {
+                var url = $(this).attr('href');
+                var pairId = $(this).attr('pairId');
+                $.ajax({
+                    url: '/update_counter',
+                    data: {'pair': pairId},
+                    type: 'POST',
+                    success: function(response){
+                        console.log(response);
+                        location.reload(true);
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form action="http://localhost:5000/generate" method="post">
+            <h1 class="a11y-hidden">Shorten your URL</h1>
+            <div>
+                <label class="label-url">
+                    <input type="text" class="text" name="url" id="url" placeholder="url" tabindex="1" required/>
+                </label>
+            </div>
+            <input type="submit" value="Submit"/>
+        </form>
+    </div>
+    <div>
+        {% if records %}
+            <table id="records">
+                <tr>
+                    <th scope="col">Shorted URL</th>
+                    <th scope="col">Clicks</th>
+                    <th scope="col">User</th>
+                </tr>
+                {% for record in records %}
+                    <tr>
+                        <td><a pairId="{{ record[1] }}" href="{{ record[2] }}" target="_blank">{{ record[4] }}</a></td>
+                        <td>{{ record[3] }}</td>
+                        <td>{{ record[0] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

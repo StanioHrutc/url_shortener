@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  @DB_SERVICE_HOST@:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=@DB_NAME@
+      - MYSQL_ROOT_PASSWORD=@DB_PASSWORD@
+    ports:
+      - @DB_PORT_OUT@:@DB_PORT@
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bridge_network
+  service:
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - "@DB_SERVICE_HOST@"
+    environment:
+      - MYSQL_DATABASE=@DB_NAME@
+      - MYSQL_ROOT_PASSWORD=@DB_PASSWORD@
+      - MYSQL_ROOT_USER=@DB_USER@
+      - MYSQL_HOST=@DB_SERVICE_HOST@
+      - MYSQL_PORT=@DB_PORT@
+    ports:
+      - @API_PORT_OUT@:@API_PORT@
+    networks:
+      - bridge_network
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  bridge_network:
+    driver: bridge

@@ -1,0 +1,10 @@
+s/@DB_PORT@/3306/
+s/@DB_PORT_OUT@/3306/
+s/@DB_HOST@/localhost/
+s/@DB_SERVICE_HOST@/db/
+s/@DB_PASSWORD@/Y*3a0IH07AM5/
+s/@DB_USER@/root/
+s/@DB_NAME@/main/
+
+s/@API_PORT@/5000/
+s/@API_PORT_OUT@/5000/
