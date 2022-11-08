@@ -10,4 +10,6 @@ def client():
 
     with app.app_context():
         with app.test_client() as client:
+            with client.session_transaction() as session:
+                session["username"] = "dummy"
             yield client
