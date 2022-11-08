@@ -1,4 +1,5 @@
 """Route declaration."""
+import uuid
 
 from flask import current_app as app
 from flask import (
@@ -14,18 +15,11 @@ from service.utils.url_shortener import generate_random_short_url
 @app.route("/")
 def home():
     """Intro login page."""
-    return render_template(
-        "home.html",
-        title="URL Shortener",
-    )
+    if not session.get("username"):
+        name = str(uuid.uuid4())[:10]
+        DBHandler.create_new_user(name)
+        session["username"] = name
 
-
-@app.route("/login", methods=["POST"])
-def login():
-    """Login endpoint for authentication of users."""
-    name = request.form["username"]
-    DBHandler.create_new_user(name)
-    session["username"] = name
     return redirect(url_for("main"))
 
 
@@ -33,6 +27,10 @@ def login():
 def main():
     """Main page for URL shortening"""
     current_user = session.get("username")
+    if not current_user:
+        print("redirecting to home")
+        return redirect(url_for("home"))
+
     records = list(DBHandler.get_records(current_user))
     return render_template(
         "main.html",
